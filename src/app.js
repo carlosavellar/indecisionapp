@@ -21,13 +21,32 @@ class IndecisionApp extends React.Component{
 
     }
 
+    handlePicker = () => {
+        const num = Math.floor(Math.random() * this.state.options.length);
+        const option = this.state.options[num];
+        alert(option);
+    }
+
+    handleDeleteOption = (optionText) => {
+        alert(optionText);
+        this.setState((prevState)=>{
+                 return{
+                     options: prevState.options.filter((option)=>optionText !== option) 
+                 } 
+        });
+    }
+
     render(){
         const title = "React Dev.: José Carlos";
         return(
             <div>
                 <Header title={title} />
-                <Options options={this.state.options}/>
-                <Action />
+                <Options 
+                handleDeleteOption={this.handleDeleteOption}
+                options={this.state.options}/>
+                <Action 
+                    handlePicker={this.handlePicker}
+                />
                 <HandleAddOption 
                     handleAddOption={this.handleAddOption}
                 />
@@ -48,7 +67,7 @@ const Header = (props) =>{
 const Action = (props) => {
     return(
         <div>
-            <button type="button">Choose Option</button>
+            <button onClick={props.handlePicker} type="button">Choose Option</button>
         </div>
     );
 }
@@ -61,7 +80,11 @@ const Options = (props) => {
     return(
         <div>
          <button type="button">Remove all</button>
-             {props.options.map((option)=>(<Option key={option} optionText={option} />))}
+             {props.options.map((option)=>(<Option 
+                                                key={option} 
+                                                optionText={option}
+                                                handleDeleteOption={props.handleDeleteOption}
+                                                />))}
         </div>
     );
 }
@@ -70,6 +93,10 @@ const Option = (props) => {
     return(
         <div className="option">
             <p className="option__text">{props.optionText}</p>
+            <button onClick={(e)=>{
+                e.preventDefault();
+                props.handleDeleteOption(props.optionText);
+            }}>X</button>
         </div>
     );
 };
